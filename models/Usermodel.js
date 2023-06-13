@@ -28,6 +28,10 @@ const userSchema = new Schema(
       type: "String",
       required: true,
     },
+    role: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );
