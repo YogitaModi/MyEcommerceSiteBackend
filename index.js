@@ -12,7 +12,10 @@ connectDb();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// middleware
 app.use(morgan("dev"));
+app.use(cors());
 app.use(express.json());
 
 // createing routes

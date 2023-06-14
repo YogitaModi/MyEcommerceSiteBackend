@@ -30,7 +30,9 @@ const registerController = async (req, res) => {
 
     const error = validationResult(req);
     if (!error.isEmpty()) {
-      return res.status(400).send("provide proper details");
+      return res
+        .status(400)
+        .json({ success: false, message: "provide proper details" });
     }
     // second method for validation of value provided by the user in the backend
     // if (!name || !email || !password || !phone || !address) {
