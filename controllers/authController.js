@@ -1,4 +1,3 @@
-const { body, validationResult } = require("express-validator");
 const { hashPassword, comparePassword } = require("../helper/authHelper");
 const userModel = require("../models/Usermodel");
 const jwt = require("jsonwebtoken");
@@ -9,45 +8,51 @@ dotenv.config();
 
 // registration controller
 const registerController = async (req, res) => {
-  const { name, email, password, phone, address } = req.body;
+  const { name, email, password, phone, address, answer } = req.body;
   try {
-    // first method for validation of value provided by the user in the backend
-    [
-      body("name", "name must not be empty").isLength({ min: 10, max: 20 }),
-      body("email", "enter a valid email address").isEmail().isLength({
-        min: 10,
-        max: 20,
-      }),
-      body("password", "password length must be more than 5 ").isLength({
-        min: 5,
-      }),
-      body("phone", "phone number must be valid").isLength({
-        min: 10,
-        max: 10,
-      }),
-      body("address", "address must not be empty").isLength({ min: 10 }),
-    ];
-
-    const error = validationResult(req);
-    if (!error.isEmpty()) {
-      return res
-        .status(400)
-        .json({ success: false, message: "provide proper details" });
+    if (!name) {
+      return res.status(400).json({
+        success: false,
+        message: "provide proper details to register",
+      });
     }
-    // second method for validation of value provided by the user in the backend
-    // if (!name || !email || !password || !phone || !address) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     message: "provide proper details to register",
-    //   });
-    // }
+    if (email.length < 10) {
+      return res.status(400).json({
+        success: false,
+        message: "provide proper details to register",
+      });
+    }
+    if (phone.length < 10) {
+      return res.status(400).json({
+        success: false,
+        message: "provide proper details to register",
+      });
+    }
+    if (password.length < 8) {
+      return res.status(400).json({
+        success: false,
+        message: "provide proper details to register",
+      });
+    }
+    if (!address) {
+      return res.status(400).json({
+        success: false,
+        message: "provide proper details to register",
+      });
+    }
+    if (!answer) {
+      return res.status(400).json({
+        success: false,
+        message: "provide proper details to register",
+      });
+    }
 
     // searching the user in database
     const userExixt = await userModel.findOne({ email });
     if (userExixt) {
       res.status(200).json({
         success: false,
-        message: "user with this email address already exixts",
+        message: "user with this email address already exists",
       });
     }
 
@@ -61,6 +66,7 @@ const registerController = async (req, res) => {
       address,
       phone,
       password: hashpassword,
+      answer,
     }).save();
 
     const authtoken = jwt.sign({ id: newUser._id }, process.env.JWT_SIGN);
@@ -77,16 +83,47 @@ const registerController = async (req, res) => {
       .json({ success: false, message: "error in registration", error });
   }
 };
+// forgot password controller
+const forgotpasswordcontroller = async (req, res) => {
+  try {
+    const { email, answer, newPassword } = req.body;
+    if (!email) {
+      res.status(400).json({ success: false, message: "email is required" });
+    }
+    if (!newPassword) {
+      res
+        .status(400)
+        .json({ success: false, message: "newPassword is required" });
+    }
+    if (!answer) {
+      res.status(400).json({ success: false, message: "answer is required" });
+    }
 
+    // checking the user in database
+    const user = await userModel.findOne({ email, answer });
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "provide correct email or answer" });
+    }
+    const hashing = await hashPassword(newPassword);
+    await userModel.findByIdAndUpdate(user._id, { password: hashing });
+    res
+      .status(200)
+      .json({ success: true, message: "password updated successfully" });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ success: false, message: "something went wrong", error });
+  }
+};
 // login controller
 
 const loginController = async (req, res) => {
   try {
     const { email, password } = req.body;
-    [
-      body("email", "enter a valid email address").isEmail(),
-      body("password", "password length must be more than 5 ").exists(),
-    ];
+
     const findUser = await userModel.findOne({ email });
 
     //   user does not exist
@@ -116,8 +153,9 @@ const loginController = async (req, res) => {
         email: findUser.email,
         phone: findUser.phone,
         address: findUser.address,
+        role: findUser.role,
       },
-      authtoken,
+      authtoken: authtoken,
     });
   } catch (error) {
     console.log(error);
@@ -129,4 +167,9 @@ const loginController = async (req, res) => {
 const testController = async (req, res) => {
   res.send("protected routes");
 };
-module.exports = { registerController, loginController, testController };
+module.exports = {
+  registerController,
+  loginController,
+  testController,
+  forgotpasswordcontroller,
+};

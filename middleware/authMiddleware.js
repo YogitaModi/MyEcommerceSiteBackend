@@ -5,11 +5,9 @@ const userModel = require("../models/Usermodel");
 
 const authMiddleware = async (req, res, next) => {
   try {
-    const decode = await jwt.verify(
-      req.headers.authorization,
-      process.env.JWT_SIGN
-    );
+    const decode = jwt.verify(req.headers.authorization, process.env.JWT_SIGN);
     req.user = decode;
+    console.log("from middleware", req.user);
     next();
   } catch (error) {
     console.log(error);
@@ -22,7 +20,7 @@ const isAdmin = async (req, res, next) => {
     const user = await userModel.findById(req.user.id);
 
     // console.log("user ", user.user);
-    if (user.role === 0) {
+    if (user.role !== 1) {
       return res.status(401).json({ success: false });
     } else {
       next();
