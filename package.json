@@ -6,9 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.js",
-    "client":"npm start --prefix ../frontened",
+    "client": "npm start --prefix ../frontened",
     "start": "concurrently \"npm run dev\" \"npm run client\""
-
   },
   "keywords": [],
   "author": "Yogita Modi",
@@ -25,6 +24,7 @@
     "mongoose": "^7.2.3",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.22",
+    "slugify": "^1.6.6",
     "uuid": "^9.0.0"
   }
 }
