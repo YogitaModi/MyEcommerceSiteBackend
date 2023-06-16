@@ -3,7 +3,7 @@ const userModel = require("../models/Usermodel");
 
 // protecting routes which are accessable only after login with the help of auth token
 
-const authMiddleware = async (req, res, next) => {
+const requireSignIn = async (req, res, next) => {
   try {
     const decode = jwt.verify(req.headers.authorization, process.env.JWT_SIGN);
     req.user = decode;
@@ -29,4 +29,4 @@ const isAdmin = async (req, res, next) => {
     console.log(error);
   }
 };
-module.exports = { authMiddleware, isAdmin };
+module.exports = { requireSignIn, isAdmin };
