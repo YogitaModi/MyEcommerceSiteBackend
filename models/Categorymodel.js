@@ -3,12 +3,12 @@ const { Schema } = mongoose;
 
 const categorySchema = new Schema({
   name: {
-    type: "String",
+    type: String,
     required: true,
     unique: true,
   },
   slug: {
-    type: "String",
+    type: String,
     lowercase: true,
   },
 });

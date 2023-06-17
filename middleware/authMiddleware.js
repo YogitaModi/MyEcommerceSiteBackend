@@ -27,6 +27,12 @@ const isAdmin = async (req, res, next) => {
     }
   } catch (error) {
     console.log(error);
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: "Error occured while validating admin",
+      });
   }
 };
 module.exports = { requireSignIn, isAdmin };
