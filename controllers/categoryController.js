@@ -111,7 +111,11 @@ const deleteCategoryController = async (req, res) => {
     const category = await Categorymodel.findByIdAndDelete(id);
     res
       .status(202)
-      .json({ success: true, message: "Category deleted Successfully" });
+      .json({
+        success: true,
+        message: "Category deleted Successfully",
+        category,
+      });
   } catch (error) {
     console.log(error);
     res.status(500).json({

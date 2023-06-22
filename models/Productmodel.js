@@ -34,6 +34,7 @@ const productSchema = new Schema(
     },
     shipping: {
       type: Boolean,
+      default: true,
     },
   },
   { timeStamps: true }

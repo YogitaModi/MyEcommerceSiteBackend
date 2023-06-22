@@ -9,6 +9,8 @@ const {
   gettingProductController,
   singleProductController,
   productImageController,
+  filterProductController,
+  searchProductController,
 } = require("../controllers/productController");
 const router = express.Router();
 
@@ -39,6 +41,11 @@ router.get("/get-product/:slug", singleProductController);
 // fetching product picture
 router.get("/product-image/:pid", productImageController);
 
+// fetching filtering product
+router.post("/filter-product", filterProductController);
+
+// search product
+router.get("/search/:keyword", searchProductController);
 // end point deleting a product
 router.delete(
   "/delete-product/:id",

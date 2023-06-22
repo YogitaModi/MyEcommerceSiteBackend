@@ -95,7 +95,7 @@ const updateProductController = async (req, res) => {
       product.image.contentType = image.type;
     }
     await product.save();
-    res.status(201).json({
+    res.status(201).send({
       success: true,
       message: "Product updated successfully",
       product,
@@ -167,7 +167,7 @@ const productImageController = async (req, res) => {
     const product = await Productmodel.findById(pid).select("image");
     if (product.image.data) {
       res.set("Content-type", product.image.contentType);
-      return res.status(200).json(product.image.data);
+      return res.status(200).send(product.image.data);
     }
   } catch (error) {
     console.log(error);
@@ -195,6 +195,91 @@ const deleteProductController = async (req, res) => {
     });
   }
 };
+
+// filter product controller
+const filterProductController = async (req, res) => {
+  try {
+    const { checked, radio } = req.body;
+    let args = {};
+    if (checked.length > 0) args.category = checked;
+    if (radio.length > 0) args.price = { $gte: radio[0], $lte: radio[1] };
+    const products = await Productmodel.find(args);
+    if (products) {
+      res.status(200).json({ success: true, products });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Error while filtering product",
+      error,
+    });
+  }
+};
+
+// product count controller
+const productCountController = async (req, res) => {
+  try {
+    const total = await Productmodel.find({}).estimatedDocumentCount();
+    res.status(200).json({
+      success: true,
+      message: "Successfully counted documents",
+      total,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Error while product count",
+      error,
+    });
+  }
+};
+
+// product per page
+const productListController = async (req, res) => {
+  try {
+    const perPage = 4;
+    const page = req.params.page ? req.params.page : 1;
+    const products = await Productmodel.find({})
+      .select("image")
+      .skip((page - 1) * perPage)
+      .limit(perPage)
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ success: true, products });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Error in per page count",
+      error,
+    });
+  }
+};
+
+// search product
+const searchProductController = async (req, res) => {
+  try {
+    const { keyword } = req.params;
+    const product = await Productmodel.find({
+      $or: [
+        { name: { $regex: keyword, $options: "i" } },
+        { description: { $regex: keyword, $options: "i" } },
+      ],
+    }).select("-image");
+    if (product) {
+      res.status(200).json({
+        success: true,
+        message: "Succesfully product fetched ",
+        product,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ success: false, message: "Something went wrong" });
+  }
+};
 module.exports = {
   createProductController,
   updateProductController,
@@ -202,4 +287,6 @@ module.exports = {
   singleProductController,
   deleteProductController,
   productImageController,
+  filterProductController,
+  searchProductController,
 };
