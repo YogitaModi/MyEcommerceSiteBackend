@@ -11,6 +11,7 @@ const {
   productImageController,
   filterProductController,
   searchProductController,
+  relatedProductController,
 } = require("../controllers/productController");
 const router = express.Router();
 
@@ -53,4 +54,7 @@ router.delete(
   isAdmin,
   deleteProductController
 );
+
+// showing related products
+router.get("/get-products/:pid/:cid", relatedProductController);
 module.exports = router;

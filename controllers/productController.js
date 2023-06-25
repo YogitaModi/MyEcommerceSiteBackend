@@ -1,6 +1,7 @@
 const Productmodel = require("../models/Productmodel");
 const fs = require("fs");
 const slugify = require("slugify");
+const { param } = require("../routes/product");
 
 // route for creating product
 const createProductController = async (req, res) => {
@@ -280,6 +281,30 @@ const searchProductController = async (req, res) => {
     res.status(400).json({ success: false, message: "Something went wrong" });
   }
 };
+
+// route for showing relatable product
+const relatedProductController = async (req, res) => {
+  try {
+    const { pid, cid } = req.params;
+    const products = await Productmodel.find(
+      {
+        category: cid,
+        _id: { $ne: pid },
+      }
+        .select("-image")
+        .limit(5)
+        .populate("category")
+    );
+    if (products) {
+      res
+        .status(200)
+        .json({ success: true, message: "Found products", products });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ success: false, message: "Something went wrong" });
+  }
+};
 module.exports = {
   createProductController,
   updateProductController,
@@ -289,4 +314,5 @@ module.exports = {
   productImageController,
   filterProductController,
   searchProductController,
+  relatedProductController,
 };
