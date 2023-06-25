@@ -12,6 +12,7 @@ const {
   filterProductController,
   searchProductController,
   relatedProductController,
+  productCategoryController,
 } = require("../controllers/productController");
 const router = express.Router();
 
@@ -56,5 +57,9 @@ router.delete(
 );
 
 // showing related products
-router.get("/get-products/:pid/:cid", relatedProductController);
+router.get("/related-product/:pid/:cid", relatedProductController);
+
+// category wise products
+router.get("/product-category/:slug", productCategoryController);
+
 module.exports = router;

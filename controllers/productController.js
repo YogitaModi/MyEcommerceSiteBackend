@@ -1,4 +1,5 @@
 const Productmodel = require("../models/Productmodel");
+const Categorymodel = require("../models/Categorymodel");
 const fs = require("fs");
 const slugify = require("slugify");
 const { param } = require("../routes/product");
@@ -286,16 +287,15 @@ const searchProductController = async (req, res) => {
 const relatedProductController = async (req, res) => {
   try {
     const { pid, cid } = req.params;
-    const products = await Productmodel.find(
-      {
-        category: cid,
-        _id: { $ne: pid },
-      }
-        .select("-image")
-        .limit(5)
-        .populate("category")
-    );
+    const products = await Productmodel.find({
+      category: cid,
+      _id: { $ne: pid },
+    })
+      .select("-image")
+      .limit(1)
+      .populate("category");
     if (products) {
+      console.log(products);
       res
         .status(200)
         .json({ success: true, message: "Found products", products });
@@ -305,6 +305,30 @@ const relatedProductController = async (req, res) => {
     res.status(400).json({ success: false, message: "Something went wrong" });
   }
 };
+
+// route for category wise product
+const productCategoryController = async (req, res) => {
+  try {
+    const category = await Categorymodel.findOne({ slug: req.params.slug });
+    const products = await Productmodel.find({ category });
+    if (products) {
+      res.status(200).json({
+        success: true,
+        message: "successfully imported products",
+        category,
+        products,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Error in deleting category",
+      error,
+    });
+  }
+};
+
 module.exports = {
   createProductController,
   updateProductController,
@@ -315,4 +339,5 @@ module.exports = {
   filterProductController,
   searchProductController,
   relatedProductController,
+  productCategoryController,
 };
