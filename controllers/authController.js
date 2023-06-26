@@ -2,6 +2,7 @@ const { hashPassword, comparePassword } = require("../helper/authHelper");
 const userModel = require("../models/Usermodel");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
+const Usermodel = require("../models/Usermodel");
 
 // confiq env so we can use environment varriables
 dotenv.config();
@@ -167,9 +168,46 @@ const loginController = async (req, res) => {
 const testController = async (req, res) => {
   res.send("protected routes");
 };
+
+// update profile controller
+const updateProfileController = async (req, res) => {
+  try {
+    const { name, email, phone, address, password } = req.body;
+    const user = await Usermodel.findById(req.user.id);
+
+    if (password && password.length < 9) {
+      res.json({ success: false, message: "password is required" });
+    }
+    const hashedPassword = password ? await hashPassword(password) : undefined;
+    const updateUser = await Usermodel.findByIdAndUpdate(
+      user._id,
+      {
+        name: name || user.name,
+        email: email || user.email,
+        password: hashedPassword || user.password,
+        phone: phone || user.phone,
+        address: address || user.address,
+      },
+      { new: true }
+    );
+    res.status(201).send({
+      success: true,
+      message: "Successfully Updated User Profile",
+      updateUser: updateUser,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Error while updating user profile",
+      error,
+    });
+  }
+};
 module.exports = {
   registerController,
   loginController,
   testController,
   forgotpasswordcontroller,
+  updateProfileController,
 };

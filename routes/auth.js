@@ -6,6 +6,7 @@ const {
   loginController,
   testController,
   forgotpasswordcontroller,
+  updateProfileController,
 } = require("../controllers/authController");
 const { requireSignIn, isAdmin } = require("../middleware/authMiddleware");
 
@@ -40,4 +41,8 @@ router.get("/user-auth", requireSignIn, async (req, res) => {
 router.get("/admin-auth", requireSignIn, isAdmin, async (req, res) => {
   res.status(200).json({ success: true });
 });
+
+// end point for updating user details require sign in
+
+router.put("/profile", requireSignIn, updateProfileController);
 module.exports = router;
