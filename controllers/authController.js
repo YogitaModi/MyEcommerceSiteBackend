@@ -221,6 +221,51 @@ const getOrdersController = async (req, res) => {
     });
   }
 };
+
+// get all orders in admin pannel
+const getAllOrdersController = async (req, res) => {
+  try {
+    const orders = await OrderModel.find({})
+      .populate("products", "-image")
+      .populate("buyer")
+      .sort({ createdAt: "-1" });
+    if (orders) {
+      res.status(200).json({
+        success: true,
+        message: "fetched all orders successfully",
+        orders,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Error while fetching all orders",
+      error,
+    });
+  }
+};
+
+// status updating route
+const statusUpdateController = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { status } = req.body;
+    const order = await OrderModel.findByIdAndUpdate(
+      orderId,
+      { status },
+      { new: true }
+    );
+    res.json(order);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Error while updating order status",
+      error,
+    });
+  }
+};
 module.exports = {
   registerController,
   loginController,
@@ -228,4 +273,6 @@ module.exports = {
   forgotpasswordcontroller,
   updateProfileController,
   getOrdersController,
+  getAllOrdersController,
+  statusUpdateController,
 };

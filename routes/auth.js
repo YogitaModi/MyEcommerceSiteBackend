@@ -8,6 +8,8 @@ const {
   forgotpasswordcontroller,
   updateProfileController,
   getOrdersController,
+  getAllOrdersController,
+  statusUpdateController,
 } = require("../controllers/authController");
 const { requireSignIn, isAdmin } = require("../middleware/authMiddleware");
 
@@ -49,4 +51,15 @@ router.put("/profile", requireSignIn, updateProfileController);
 
 // end point for orders
 router.get("/orders", requireSignIn, getOrdersController);
+
+// end point for orders
+router.get("/all-orders", requireSignIn, isAdmin, getAllOrdersController);
+
+// end point for updating order status
+router.put(
+  "/order-status/:orderId",
+  requireSignIn,
+  isAdmin,
+  statusUpdateController
+);
 module.exports = router;
