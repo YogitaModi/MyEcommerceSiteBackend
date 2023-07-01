@@ -2,7 +2,7 @@ const { hashPassword, comparePassword } = require("../helper/authHelper");
 const userModel = require("../models/Usermodel");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
-const Usermodel = require("../models/Usermodel");
+const OrderModel = require("../models/OrderModel");
 
 // confiq env so we can use environment varriables
 dotenv.config();
@@ -173,13 +173,13 @@ const testController = async (req, res) => {
 const updateProfileController = async (req, res) => {
   try {
     const { name, email, phone, address, password } = req.body;
-    const user = await Usermodel.findById(req.user.id);
+    const user = await userModel.findById(req.user.id);
 
     if (password && password.length < 9) {
       res.json({ success: false, message: "password is required" });
     }
     const hashedPassword = password ? await hashPassword(password) : undefined;
-    const updateUser = await Usermodel.findByIdAndUpdate(
+    const updateUser = await userModel.findByIdAndUpdate(
       user._id,
       {
         name: name || user.name,
@@ -204,10 +204,28 @@ const updateProfileController = async (req, res) => {
     });
   }
 };
+
+// get orders end point require sign in
+const getOrdersController = async (req, res) => {
+  try {
+    const Orders = await OrderModel.find({ buyer: req.user.id })
+      .populate("products", "-image")
+      .populate("buyer");
+
+    res.status(200).json(Orders);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error while getting user orders",
+      error,
+    });
+  }
+};
 module.exports = {
   registerController,
   loginController,
   testController,
   forgotpasswordcontroller,
   updateProfileController,
+  getOrdersController,
 };

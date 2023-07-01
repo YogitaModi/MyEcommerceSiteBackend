@@ -13,6 +13,8 @@ const {
   searchProductController,
   relatedProductController,
   productCategoryController,
+  braintreeTokenController,
+  braintreePaymentsController,
 } = require("../controllers/productController");
 const router = express.Router();
 
@@ -61,5 +63,12 @@ router.get("/related-product/:pid/:cid", relatedProductController);
 
 // category wise products
 router.get("/product-category/:slug", productCategoryController);
+
+// PAYMENT ROUTE
+// TOKEN
+router.get("/braintree/token", braintreeTokenController);
+
+// payments
+router.post("/braintree/payments", requireSignIn, braintreePaymentsController);
 
 module.exports = router;

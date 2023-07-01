@@ -2,7 +2,19 @@ const Productmodel = require("../models/Productmodel");
 const Categorymodel = require("../models/Categorymodel");
 const fs = require("fs");
 const slugify = require("slugify");
-const { param } = require("../routes/product");
+const braintree = require("braintree");
+const OrderModel = require("../models/OrderModel");
+const dotenv = require("dotenv");
+
+dotenv.config();
+
+// PAYTMENT GATEWAY
+var gateway = new braintree.BraintreeGateway({
+  environment: braintree.Environment.Sandbox,
+  merchantId: process.env.BRAINTREE_MERCHANT_ID,
+  publicKey: process.env.BRAINTREE_PUBLIC_KEY,
+  privateKey: process.env.BRAINTREE_PRIVATE_KEY,
+});
 
 // route for creating product
 const createProductController = async (req, res) => {
@@ -329,6 +341,58 @@ const productCategoryController = async (req, res) => {
   }
 };
 
+// paytment gateway api
+// braintree token controller
+
+const braintreeTokenController = async (req, res) => {
+  try {
+    gateway.clientToken.generate({}, function (error, response) {
+      if (error) {
+        res.status(500).json(error);
+      } else {
+        res.status(200).json(response);
+      }
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// payments
+
+const braintreePaymentsController = async (req, res) => {
+  try {
+    const { cart, nonce } = req.body;
+    let total = 0;
+    cart.map((item) => {
+      total += item.price;
+    });
+    let newTransaction = gateway.transaction.sale(
+      {
+        amount: total,
+        paymentMethodNonce: nonce,
+        options: {
+          submitForSettlement: true,
+        },
+      },
+      function (error, result) {
+        if (result) {
+          const order = new OrderModel({
+            products: cart,
+            payments: result,
+            buyer: req.user.id,
+          }).save();
+          res.status(200).json({ success: true });
+        } else {
+          res.status(500).send(error);
+        }
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   createProductController,
   updateProductController,
@@ -340,4 +404,6 @@ module.exports = {
   searchProductController,
   relatedProductController,
   productCategoryController,
+  braintreeTokenController,
+  braintreePaymentsController,
 };
