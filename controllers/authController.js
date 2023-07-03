@@ -3,6 +3,7 @@ const userModel = require("../models/Usermodel");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const OrderModel = require("../models/OrderModel");
+const Usermodel = require("../models/Usermodel");
 
 // confiq env so we can use environment varriables
 dotenv.config();
@@ -266,6 +267,57 @@ const statusUpdateController = async (req, res) => {
     });
   }
 };
+
+// all user routes
+const allUsersController = async (req, res) => {
+  try {
+    const users = await userModel
+      .find({})
+      .select("-password")
+      .select("-answer")
+      .sort({ createdAt: "-1" });
+    if (users) {
+      res.status(200).json({
+        success: true,
+        message: "all users fetched successfully",
+        users,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Error while fetching users",
+      error,
+    });
+  }
+};
+
+// product quantity controller
+// const productQuantityController = async (req, res) => {
+//   try {
+//     const { pid, oid } = req.params;
+//     const { quantity } = req.body;
+//     const order = await OrderModel.find({ products: pid });
+//     if (order) {
+//       order.orderQauntity = quantity;
+//     }
+//     const updateOrder = await OrderModel.findByIdAndUpdate(
+//       oid,
+//       { orderQauntity: quantity },
+//       { new: true }
+//     );
+//     res.json(updateOrder);
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Error while updating order quantity",
+//       error,
+//     });
+//   }
+// };
+
 module.exports = {
   registerController,
   loginController,
@@ -275,4 +327,5 @@ module.exports = {
   getOrdersController,
   getAllOrdersController,
   statusUpdateController,
+  allUsersController,
 };

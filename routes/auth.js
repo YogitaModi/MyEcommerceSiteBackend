@@ -10,6 +10,7 @@ const {
   getOrdersController,
   getAllOrdersController,
   statusUpdateController,
+  allUsersController,
 } = require("../controllers/authController");
 const { requireSignIn, isAdmin } = require("../middleware/authMiddleware");
 
@@ -62,4 +63,14 @@ router.put(
   isAdmin,
   statusUpdateController
 );
+
+// end point for getting all users
+router.get("/all-users", requireSignIn, isAdmin, allUsersController);
+
+// // setting order quantity
+// router.put(
+//   "/order-quantity/:oid/:pid",
+//   requireSignIn,
+//   productQuantityController
+// );
 module.exports = router;
