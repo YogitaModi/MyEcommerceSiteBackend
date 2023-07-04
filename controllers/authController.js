@@ -3,7 +3,6 @@ const userModel = require("../models/Usermodel");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const OrderModel = require("../models/OrderModel");
-const Usermodel = require("../models/Usermodel");
 
 // confiq env so we can use environment varriables
 dotenv.config();
@@ -72,14 +71,13 @@ const registerController = async (req, res) => {
     }).save();
 
     const authtoken = jwt.sign({ id: newUser._id }, process.env.JWT_SIGN);
-    console.log(authtoken);
+
     res.status(201).json({
       success: true,
       message: "new user registered successfully",
       authtoken,
     });
   } catch (error) {
-    console.log(error);
     res
       .status(500)
       .json({ success: false, message: "error in registration", error });
@@ -114,7 +112,6 @@ const forgotpasswordcontroller = async (req, res) => {
       .status(200)
       .json({ success: true, message: "password updated successfully" });
   } catch (error) {
-    console.log(error);
     res
       .status(500)
       .json({ success: false, message: "something went wrong", error });
@@ -160,7 +157,6 @@ const loginController = async (req, res) => {
       authtoken: authtoken,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ success: false, message: "error in login", error });
   }
 };
@@ -197,7 +193,6 @@ const updateProfileController = async (req, res) => {
       updateUser: updateUser,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       success: false,
       message: "Error while updating user profile",
@@ -238,7 +233,6 @@ const getAllOrdersController = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       success: false,
       message: "Error while fetching all orders",
@@ -259,7 +253,6 @@ const statusUpdateController = async (req, res) => {
     );
     res.json(order);
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       success: false,
       message: "Error while updating order status",
@@ -284,7 +277,6 @@ const allUsersController = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       success: false,
       message: "Error while fetching users",
@@ -292,31 +284,6 @@ const allUsersController = async (req, res) => {
     });
   }
 };
-
-// product quantity controller
-// const productQuantityController = async (req, res) => {
-//   try {
-//     const { pid, oid } = req.params;
-//     const { quantity } = req.body;
-//     const order = await OrderModel.find({ products: pid });
-//     if (order) {
-//       order.orderQauntity = quantity;
-//     }
-//     const updateOrder = await OrderModel.findByIdAndUpdate(
-//       oid,
-//       { orderQauntity: quantity },
-//       { new: true }
-//     );
-//     res.json(updateOrder);
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json({
-//       success: false,
-//       message: "Error while updating order quantity",
-//       error,
-//     });
-//   }
-// };
 
 module.exports = {
   registerController,

@@ -33,7 +33,7 @@ const createProductController = async (req, res) => {
         return res.status(500).json({ message: "Category is Required" });
       case !quantity:
         return res.status(500).json({ message: "Quantity is Required" });
-      case image && image.size > 1048576:
+      case image && image.size > 8000000:
         return res
           .status(500)
           .json({ message: "image is Required and should be less then 1mb" });
@@ -66,7 +66,6 @@ const createProductController = async (req, res) => {
       product,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       success: false,
       message: "Error while creating new product",
@@ -115,7 +114,6 @@ const updateProductController = async (req, res) => {
       product,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       success: false,
       message: "Error while updating product",
@@ -139,7 +137,6 @@ const gettingProductController = async (req, res) => {
       product,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       success: false,
       message: "Error while getting all product",
@@ -165,7 +162,6 @@ const singleProductController = async (req, res) => {
         .json({ success: true, message: "found the product", product });
     }
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       success: false,
       message: "error while fetching the product",
@@ -201,7 +197,6 @@ const deleteProductController = async (req, res) => {
       .status(200)
       .json({ success: true, message: "Successfully deleted the product" });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       success: false,
       message: "Error while deleting product",
@@ -222,7 +217,6 @@ const filterProductController = async (req, res) => {
       res.status(200).json({ success: true, products });
     }
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       success: false,
       message: "Error while filtering product",
@@ -263,7 +257,6 @@ const productListController = async (req, res) => {
 
     res.status(200).json({ success: true, products });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       success: false,
       message: "Error in per page count",
@@ -290,7 +283,6 @@ const searchProductController = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(error);
     res.status(400).json({ success: false, message: "Something went wrong" });
   }
 };
@@ -313,7 +305,6 @@ const relatedProductController = async (req, res) => {
         .json({ success: true, message: "Found products", products });
     }
   } catch (error) {
-    console.log(error);
     res.status(400).json({ success: false, message: "Something went wrong" });
   }
 };
@@ -332,7 +323,6 @@ const productCategoryController = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       success: false,
       message: "Error in deleting category",
@@ -354,7 +344,11 @@ const braintreeTokenController = async (req, res) => {
       }
     });
   } catch (error) {
-    console.log(error);
+    res.status(500).json({
+      success: false,
+
+      error,
+    });
   }
 };
 
@@ -389,7 +383,11 @@ const braintreePaymentsController = async (req, res) => {
       }
     );
   } catch (error) {
-    console.log(error);
+    res.status(500).json({
+      success: false,
+
+      error,
+    });
   }
 };
 

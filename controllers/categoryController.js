@@ -29,7 +29,6 @@ const createCategorycontroller = async (req, res) => {
       category,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       success: false,
       message: "Error in category",
@@ -58,7 +57,6 @@ const updateCategoryController = async (req, res) => {
       category,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       success: false,
       message: "Error in updating category",
@@ -75,7 +73,6 @@ const gettingCategoryController = async (req, res) => {
       .status(200)
       .json({ success: true, message: "All category list", category });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       success: false,
       message: "Error in getting category",
@@ -95,7 +92,6 @@ const singleCategoryController = async (req, res) => {
       category,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       success: false,
       message: "Error in getting single category",
@@ -115,7 +111,6 @@ const deleteCategoryController = async (req, res) => {
       category,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       success: false,
       message: "Error in deleting category",
