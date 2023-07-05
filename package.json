@@ -5,9 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js",
+    "start":"node index.js",
+    "server": "nodemon index.js",
     "client": "npm start --prefix ../frontened",
-    "start": "concurrently \"npm run dev\" \"npm run client\""
+    
+    "dev": "concurrently \"npm run start\" \"npm run client\""
   },
   "keywords": [],
   "author": "Yogita Modi",
