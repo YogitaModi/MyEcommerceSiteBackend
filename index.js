@@ -5,7 +5,7 @@ const connectDb = require("./config/db");
 const auth = require("./routes/auth");
 const category = require("./routes/category");
 const product = require("./routes/product");
-const morgan = require("morgan");
+// const morgan = require("morgan");
 
 dotenv.config();
 
@@ -16,7 +16,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // middleware
-app.use(morgan("dev"));
+// app.use(morgan("dev"));
 app.use(cors());
 app.use(express.json());
 
