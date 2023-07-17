@@ -296,7 +296,7 @@ const relatedProductController = async (req, res) => {
       _id: { $ne: pid },
     })
       .select("-image")
-      .limit(1)
+      .limit(2)
       .populate("category");
     if (products) {
       console.log(products);
