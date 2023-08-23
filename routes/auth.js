@@ -50,7 +50,7 @@ router.get("/admin-auth", requireSignIn, isAdmin, async (req, res) => {
 
 router.put("/profile", requireSignIn, updateProfileController);
 
-// end point for orders
+// end point for user orders
 router.get("/orders", requireSignIn, getOrdersController);
 
 // end point for orders
