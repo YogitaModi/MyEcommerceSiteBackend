@@ -6,8 +6,10 @@ const userModel = require("../models/Usermodel");
 const requireSignIn = async (req, res, next) => {
   try {
     const decode = jwt.verify(req.headers.authorization, process.env.JWT_SIGN);
-    req.user = decode;
 
+    req.user = decode;
+    console.log("decode value is ", decode);
+    // console.log("decode value is ", req.user.id);
     next();
   } catch (error) {
     console.log(error);

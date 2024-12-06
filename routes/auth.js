@@ -40,7 +40,7 @@ router.get("/test", requireSignIn, isAdmin, testController);
 router.get("/user-auth", requireSignIn, async (req, res) => {
   res.status(200).json({ success: true });
 });
-// end point for fetching admin specific data after user login using get method :"/api/v1/auth/user-auth"
+// end point for fetching admin specific data after user login using get method :"/api/v1/auth/admin-auth"
 
 router.get("/admin-auth", requireSignIn, isAdmin, async (req, res) => {
   res.status(200).json({ success: true });
